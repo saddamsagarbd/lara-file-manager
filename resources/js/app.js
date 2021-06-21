@@ -16,6 +16,42 @@ window.Form = Form;
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
+import VueProgressBar from 'vue-progressbar'
+
+let options = {
+    color: '#bffaf3',
+    failedColor: '#874b4b',
+    thickness: '5px',
+    transition: {
+      speed: '0.2s',
+      opacity: '0.6s',
+      termination: 300
+    },
+    autoRevert: true,
+    location: 'left',
+    inverse: false
+  }
+  
+Vue.use(VueProgressBar, options)
+
+import Swal from 'sweetalert2'
+window.Swal = Swal;
+
+let Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+})
+window.Toast = Toast;
+
+window.Fire = new Vue();
+
 let routes = [
     { path: '/dashboard', component: require('./components/DashboardComponent.vue').default },
     { path: '/user-manage', component: require('./components/UserManageComponent.vue').default },

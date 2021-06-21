@@ -17,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+// Route::post('/createDirectory', [App\Http\Controllers\API\DirectoryController::class, 'createDirectory']);
+Route::apiResources([
+    'directories' => App\Http\Controllers\API\DirectoryController::class,
+]);

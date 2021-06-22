@@ -2138,6 +2138,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     });
   },
   methods: {
+    createDirectoryModal: function createDirectoryModal() {
+      this.form.reset();
+      $('#createDirectory').modal('show');
+    },
+    renameDirectory: function renameDirectory(directory) {
+      this.form.reset();
+      $('#createDirectory').modal('show');
+      this.form.fill(directory);
+    },
     displayDirectories: function displayDirectories() {
       var _this2 = this;
 
@@ -42374,7 +42383,33 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm._m(0),
+    _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-sm-2" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-success",
+                on: {
+                  click: function($event) {
+                    return _vm.createDirectoryModal()
+                  }
+                }
+              },
+              [
+                _c("i", { staticClass: "fa fa-plus fa-fw" }),
+                _vm._v("Create Directory")
+              ]
+            )
+          ]),
+          _vm._v(" "),
+          _c("hr")
+        ])
+      ])
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "content" }, [
       _c("div", { staticClass: "container-fluid" }, [
@@ -42402,7 +42437,7 @@ var render = function() {
                       attrs: { href: "#" },
                       on: {
                         click: function($event) {
-                          return _vm.renameDirectory(directory.id)
+                          return _vm.renameDirectory(directory)
                         }
                       }
                     },
@@ -42541,35 +42576,10 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "content-header" }, [
-      _c("div", { staticClass: "container-fluid" }, [
-        _c("div", { staticClass: "row mb-2" }, [
-          _c("div", { staticClass: "col-sm-10" }, [
-            _c("h1", { staticClass: "m-0 text-dark" }, [
-              _c("i", { staticClass: "fas fa-folder" }),
-              _vm._v("\n                    Directories\n                    ")
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-sm-2" }, [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-success",
-                attrs: {
-                  "data-toggle": "modal",
-                  "data-target": "#createDirectory"
-                }
-              },
-              [
-                _c("i", { staticClass: "fa fa-plus fa-fw" }),
-                _vm._v("Create Directory")
-              ]
-            )
-          ]),
-          _vm._v(" "),
-          _c("hr")
-        ])
+    return _c("div", { staticClass: "col-sm-10" }, [
+      _c("h1", { staticClass: "m-0 text-dark" }, [
+        _c("i", { staticClass: "fas fa-folder" }),
+        _vm._v("\n                    Directories\n                    ")
       ])
     ])
   },

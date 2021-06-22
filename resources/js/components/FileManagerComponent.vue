@@ -10,7 +10,7 @@
                         </h1>                        
                     </div><!-- /.col -->
                     <div class="col-sm-2">
-                        <button class="btn btn-success" data-toggle="modal" data-target="#createDirectory"><i class="fa fa-plus fa-fw"></i>Create Directory</button>
+                        <button class="btn btn-success" @click="createDirectoryModal()"><i class="fa fa-plus fa-fw"></i>Create Directory</button>
                     </div>
                     <hr>
                 </div><!-- /.row -->
@@ -29,7 +29,7 @@
                                 Number of files:#
                                 </p>
 
-                                <a href="#" class="card-link" @click="renameDirectory(directory.id)">Rename</a>
+                                <a href="#" class="card-link" @click="renameDirectory(directory)">Rename</a>
                                 <a href="#" class="card-link" @click="deleteDirectory(directory.id)">Delete</a>
                             </div>
                         </div>
@@ -80,6 +80,15 @@
             Fire.$on("AfterDelete", ()=> this.displayDirectories());
         },
         methods: {
+            createDirectoryModal(){
+                this.form.reset();
+                $('#createDirectory').modal('show');
+            },
+            renameDirectory(directory){
+                this.form.reset();
+                $('#createDirectory').modal('show');
+                this.form.fill(directory);
+            },
             displayDirectories(){
                 axios.get('/api/directories').then(({ data }) => (this.directories = data));
             },

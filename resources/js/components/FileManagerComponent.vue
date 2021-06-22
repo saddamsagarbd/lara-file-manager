@@ -23,7 +23,11 @@
                     <div class="col-lg-4" v-for="directory in directories" :key="directory.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ directory.directory_name }}</h5>
+                                <h5 class="card-title">
+                                    <router-link :to="{ name:'Folder', params:{ id: directory.id }}">
+                                    {{ directory.directory_name }}
+                                    </router-link>
+                                </h5>
 
                                 <p class="card-text">
                                 Number of files:#

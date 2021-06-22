@@ -44,7 +44,7 @@ class DirectoryController extends Controller
      */
     public function show($id)
     {
-        //
+        return ['message' => "I ahve your data"];
     }
 
     /**

@@ -57,8 +57,8 @@ let routes = [
     { path: '/user-manage', component: require('./components/UserManageComponent.vue').default },
     { path: '/file-manage', component: require('./components/FileManageComponent.vue').default },
     { path: '/file-manager', component: require('./components/FileManagerComponent.vue').default },
-    { path: '/file-upload', component: require('./components/FileUploadComponent.vue').default },
-    { path: '/folder', name:'folder', component: require('./components/DirectoryComponent.vue').default, props: true },
+    // { path: '/file-upload', component: require('./components/FileUploadComponent.vue').default },
+    { path: '/folder/:id', name:'folder', component: require('./components/FileUploadComponent.vue').default,},
 ]
 
 const router = new VueRouter({

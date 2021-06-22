@@ -24,7 +24,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">
-                                    <router-link :to="{ name:'Folder', params:{ id: directory.id }}">
+                                    <router-link :to="{ name:'folder', params:{ id: directory.id }}">
                                     {{ directory.directory_name }}
                                     </router-link>
                                 </h5>

@@ -25,3 +25,5 @@ Route::apiResources([
     // 'folder/{id}' => App\Http\Controllers\API\DirectoryController::class,
 ]);
 Route::post('upload', [FileController::class, 'store']);
+Route::get('folder/{id}/files', [FileController::class, 'index']);
+Route::get('download/{file_id}', [FileController::class, 'downloadFile']);

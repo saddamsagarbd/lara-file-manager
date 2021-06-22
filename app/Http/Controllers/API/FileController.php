@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\File;
+use App\Models\Directory;
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -13,9 +15,9 @@ class FileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($folder_id)
     {
-        //
+        return File::where("folder_id", $folder_id)->get();
     }
 
     /**
@@ -25,19 +27,24 @@ class FileController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {      
+    {
         if(count($request->file('file')) > 0){
-            foreach($request->file('file') as $key => $file){
-                $path = $file->store('uploads');
-                if($path){
-                    File::create([
-                        'file_name' => $file->getClientOriginalName(),
-                        'file_path' => storage_path().'/'.$path,
-                        'folder' => 1,
-                    ]);
+            $directoryDtl = Directory::findOrFail($request["directory_id"]);
+            if(isset($directoryDtl["directory_name"])){
+                foreach($request->file('file') as $key => $file){
+                    $path = $file->store($directoryDtl["directory_name"]);           
+                    if($path){
+                        File::create([
+                            'file_name' => $file->getClientOriginalName(),
+                            'file_path' => $path,
+                            'folder_id' => $directoryDtl["id"],
+                        ]);
+                    }
                 }
-            }            
-            return ['status'=>"success", 'msg' => "File successfully uploaded"];
+                return ['status'=>"success", 'msg' => "File successfully uploaded"];
+            }else{
+                return ['status'=>"error", 'msg' => "File not upload"];
+            }
         }else{
             return ['status'=>"error", 'msg' => "File not upload"];
         }
@@ -75,5 +82,18 @@ class FileController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Download the specified file from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadFile($file_id)
+    {
+        $fileDtl = File::findOrFail($file_id);
+        return Storage::download($fileDtl->file_path);
+
     }
 }

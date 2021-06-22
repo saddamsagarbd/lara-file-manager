@@ -17,7 +17,7 @@ class CreateFilesTable extends Migration
             $table->id();
             $table->string('file_name');
             $table->string('file_path');
-            $table->tinyInteger('folder');
+            $table->tinyInteger('folder_id');
             $table->timestamps();
         });
     }

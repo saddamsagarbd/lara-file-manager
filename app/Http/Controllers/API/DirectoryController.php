@@ -30,7 +30,7 @@ class DirectoryController extends Controller
         $this->validate($request, [
             'directory_name' => 'required|min:3|max:191',
         ]);
-        Storage::makeDirectory($request['directory_name']);
+        Storage::makeDirectory('public/'.$request['directory_name']);
         return Directory::create([
             'directory_name' => $request['directory_name'],
         ]);

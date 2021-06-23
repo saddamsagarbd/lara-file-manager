@@ -2006,6 +2006,51 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2023,8 +2068,57 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  mounted: function mounted() {
-    console.log('Component mounted.');
+  mounted: function mounted() {// this.loadFileSettings();
+    // Fire.$on("AfterCreate", () => this.loadFileSettings());
+  },
+  data: function data() {
+    return {
+      settings: {},
+      btnText: "Create",
+      form: new Form({
+        allowFormat: '',
+        maxFileSize: '' // user_id: '',
+
+      })
+    };
+  },
+  methods: {
+    fileSettings: function fileSettings() {
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this.$Progress.start();
+
+                _context.next = 3;
+                return _this.form.post('/api/fileSettings').then(function () {
+                  Fire.$emit("AfterCreate");
+                  Toast.fire({
+                    icon: 'success',
+                    title: 'File settings created'
+                  });
+                  _this.btnText = "Update";
+
+                  _this.$Progress.finish();
+                })["catch"](function () {
+                  _this.$Progress.fail();
+                });
+
+              case 3:
+                response = _context.sent;
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    }
   }
 });
 
@@ -2310,12 +2404,38 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       files: {},
+      imgSrc: '',
       dropzoneOptions: {
         url: 'http://127.0.0.1:8000/api/upload',
         params: {
@@ -2413,21 +2533,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       return uploadFiles;
     }(),
     previewFile: function previewFile(file_path) {
-      console.log('path:' + file_path);
+      $('#previewImg').modal('show');
+      this.imgSrc = '/storage/' + file_path;
     },
-    download: function download() {
+    download: function download(file) {
       axios({
         url: '/api/download/' + this.$route.params.id,
         method: 'GET',
         responseType: 'blob'
       }).then(function (res) {
         var blob = new Blob([res.data], {
-          type: res.headers['content-type']
-        });
-        var link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = blob.type.slice(blob.type.lastIndexOf('i'));
-        link.click();
+          type: "octet/stream"
+        }),
+            url = window.URL.createObjectURL(blob),
+            a = document.createElement("a");
+        a.href = url;
+        a.download = file.file_name;
+        a.click();
+        window.URL.revokeObjectURL(url);
       })["catch"](function (err) {
         return console.log(err);
       });
@@ -43028,27 +43151,184 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "container" }, [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("div", { staticClass: "content" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-lg-12" }, [
+            _c(
+              "form",
+              {
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    return _vm.fileSettings.apply(null, arguments)
+                  },
+                  keydown: function($event) {
+                    return _vm.form.onKeydown($event)
+                  }
+                }
+              },
+              [
+                _c("div", { staticClass: "modal-content" }, [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-body" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "exampleInputEmail1" } }, [
+                        _vm._v("Allow file format")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form.allowFormat,
+                            expression: "form.allowFormat"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        staticStyle: { width: "100%" },
+                        attrs: {
+                          type: "text",
+                          name: "allowFormat",
+                          placeholder: "e.g. jpg,pdf"
+                        },
+                        domProps: { value: _vm.form.allowFormat },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.form,
+                              "allowFormat",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.form.errors.has("allowFormat")
+                        ? _c("div", {
+                            domProps: {
+                              innerHTML: _vm._s(
+                                _vm.form.errors.get("allowFormat")
+                              )
+                            }
+                          })
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "exampleInputEmail1" } }, [
+                        _vm._v("Maximum file size")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form.maxFileSize,
+                            expression: "form.maxFileSize"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        staticStyle: { width: "100%" },
+                        attrs: {
+                          type: "number",
+                          name: "maxFileSize",
+                          placeholder: "25mb"
+                        },
+                        domProps: { value: _vm.form.maxFileSize },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.form,
+                              "maxFileSize",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.form.errors.has("maxFileSize")
+                        ? _c("div", {
+                            domProps: {
+                              innerHTML: _vm._s(
+                                _vm.form.errors.get("maxFileSize")
+                              )
+                            }
+                          })
+                        : _vm._e()
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-footer" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger",
+                        attrs: { type: "button", "data-dismiss": "modal" }
+                      },
+                      [_vm._v("Close")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "submit", disabled: _vm.form.busy }
+                      },
+                      [_vm._v(_vm._s(_vm.btnText))]
+                    )
+                  ])
+                ])
+              ]
+            )
+          ])
+        ])
+      ])
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "container" }, [
-      _c("div", { staticClass: "row justify-content-center" }, [
-        _c("div", { staticClass: "col-md-8" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [_vm._v("File Manage")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _vm._v(
-                "\n                    I'm an example component.\n                "
-              )
+    return _c("div", { staticClass: "content-header" }, [
+      _c("div", { staticClass: "container-fluid" }, [
+        _c("div", { staticClass: "row mb-2" }, [
+          _c("div", { staticClass: "col-sm-10" }, [
+            _c("h1", { staticClass: "m-0 text-dark" }, [
+              _c("i", { staticClass: "fas fa-folder" }),
+              _vm._v("\n                    Directories\n                    ")
             ])
-          ])
+          ]),
+          _vm._v(" "),
+          _c("hr")
         ])
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "fileManageTitle" } },
+        [_vm._v("File Manage")]
+      )
     ])
   }
 ]
@@ -43371,6 +43651,8 @@ var render = function() {
       )
     ]),
     _vm._v(" "),
+    _c("div", { staticClass: "clr", staticStyle: { height: "60px" } }),
+    _vm._v(" "),
     _c("div", { staticClass: "content" }, [
       _c("div", { staticClass: "container-fluid" }, [
         _c(
@@ -43380,19 +43662,33 @@ var render = function() {
             return _c("div", { key: file.id, staticClass: "col-lg-4" }, [
               _c("div", { staticClass: "card" }, [
                 _c("div", { staticClass: "card-body" }, [
-                  _c("img", {
-                    staticClass: "img-thumbnail",
-                    staticStyle: { width: "100px", height: "100px" },
-                    attrs: { src: "/storage/" + file.file_path, alt: "" }
-                  }),
-                  _vm._v(" "),
                   _c(
-                    "h5",
+                    "a",
                     {
-                      staticClass: "card-title",
-                      staticStyle: { overflow: "hidden" }
+                      staticClass: "card-link",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          return _vm.previewFile(file.file_path)
+                        }
+                      }
                     },
-                    [_vm._v(_vm._s(file.file_name))]
+                    [
+                      _c("img", {
+                        staticClass: "img-thumbnail",
+                        staticStyle: { width: "100px", height: "100px" },
+                        attrs: { src: "/storage/" + file.file_path, alt: "" }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "h5",
+                        {
+                          staticClass: "card-title",
+                          staticStyle: { overflow: "hidden" }
+                        },
+                        [_vm._v(_vm._s(file.file_name))]
+                      )
+                    ]
                   ),
                   _vm._v(" "),
                   _c(
@@ -43412,11 +43708,19 @@ var render = function() {
                   _c(
                     "a",
                     {
-                      staticClass: "card-link",
                       attrs: { href: "#" },
-                      on: { click: _vm.download }
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.download(file)
+                        }
+                      }
                     },
-                    [_vm._v("Download")]
+                    [
+                      _vm._v(
+                        "\n                                Download\n                            "
+                      )
+                    ]
                   )
                 ])
               ])
@@ -43425,7 +43729,46 @@ var render = function() {
           0
         )
       ])
-    ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade bd-example-modal-lg",
+        attrs: {
+          id: "previewImg",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "createDirectoryTitle",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          { staticClass: "modal-dialog modal-lg", attrs: { role: "document" } },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("img", {
+                  staticClass: "img-thumbnail",
+                  staticStyle: {
+                    width: "100%",
+                    margin: "0px auto",
+                    display: "block"
+                  },
+                  attrs: { src: _vm.imgSrc, alt: "" }
+                })
+              ]),
+              _vm._v(" "),
+              _vm._m(2)
+            ])
+          ]
+        )
+      ]
+    )
   ])
 }
 var staticRenderFns = [
@@ -43442,6 +43785,46 @@ var staticRenderFns = [
       ]),
       _vm._v(" "),
       _c("hr")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "previewImgTitle" } },
+        [_vm._v("Preview")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-danger",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Close")]
+      )
     ])
   }
 ]

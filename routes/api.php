@@ -19,11 +19,14 @@ use App\Http\Controllers\API\FileController;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-// Route::post('/createDirectory', [App\Http\Controllers\API\DirectoryController::class, 'createDirectory']);
-Route::apiResources([
-    'directories' => DirectoryController::class,
-    // 'folder/{id}' => App\Http\Controllers\API\DirectoryController::class,
-]);
-Route::post('upload', [FileController::class, 'store']);
-Route::get('folder/{id}/files', [FileController::class, 'index']);
-Route::get('download/{file_id}', [FileController::class, 'downloadFile']);
+  
+    Route::apiResources([
+        'directories' => DirectoryController::class,
+    ]);
+    Route::post('upload', [FileController::class, 'store']);
+    Route::get('folder/{id}/files', [FileController::class, 'index']);
+    Route::get('download/{file_id}', [FileController::class, 'downloadFile']);
+    Route::post('fileSettings', [FileController::class, 'fileSettings']);
+
+
+

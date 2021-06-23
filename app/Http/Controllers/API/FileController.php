@@ -4,9 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\File;
 use App\Models\Directory;
-use Illuminate\Support\Facades\Storage;
+use App\Models\FileManage;
+use Auth;
 
 class FileController extends Controller
 {
@@ -93,7 +95,24 @@ class FileController extends Controller
     public function downloadFile($file_id)
     {
         $fileDtl = File::findOrFail($file_id);
-        return Storage::download($fileDtl->file_path);
+        $path = storage_path().'/'.$fileDtl->file_path;
+        if (file_exists($path)) {
+            return Storage::download($path);
+        }
+
+    }
+    public function fileSettings(Request $request)
+    {
+        $this->validate($request, [
+            'allowFormat' => 'required|max:191',
+            'maxFileSize' => 'required',
+        ]);
+        FileManage::create([
+            'allowFormat' => $request['allowFormat'],
+            'maxFileSize' => $request['maxFileSize'],
+            // 'user_id' => $request['user_id'],
+        ]);
+        return ['status'=>"success", 'msg' => "File settings created"];
 
     }
 }

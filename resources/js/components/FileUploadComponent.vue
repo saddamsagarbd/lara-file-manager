@@ -29,6 +29,7 @@
                 </button>
             </div><!-- /.container-fluid -->
         </div>
+        <div class="clr" style="height: 60px;"></div>
         <!-- /.content-header -->
         <div class="content">
             <div class="container-fluid">
@@ -36,10 +37,15 @@
                     <div class="col-lg-4" v-for="file in files" :key="file.id">
                         <div class="card">
                             <div class="card-body">
-                                <img :src="'/storage/'+file.file_path" alt="" class="img-thumbnail" style="width: 100px; height: 100px" />
-                                <h5 class="card-title" style="overflow:hidden;">{{ file.file_name }}</h5>
+                                <a href="#" class="card-link" @click="previewFile(file.file_path)">
+                                    <img :src="'/storage/'+file.file_path" alt="" class="img-thumbnail" style="width: 100px; height: 100px" />
+                                    <h5 class="card-title" style="overflow:hidden;">{{ file.file_name }}</h5>
+                                </a>
+
                                 <a href="#" class="card-link" @click="previewFile(file.file_path)">Preview</a>
-                                <a href="#" class="card-link" @click="download">Download</a>
+                                <a href="#" @click.prevent="download(file)">
+                                    Download
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -47,6 +53,25 @@
                 </div>
                 <!-- /.row -->
             </div><!-- /.container-fluid -->
+        </div>
+        <!-- Modal -->
+        <div class="modal fade bd-example-modal-lg" id="previewImg" tabindex="-1" role="dialog" aria-labelledby="createDirectoryTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="previewImgTitle">Preview</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <img :src="imgSrc" alt="" class="img-thumbnail" style="width: 100%; margin: 0px auto; display: block;" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -58,6 +83,7 @@
         data (){
             return {
                 files:{},
+                imgSrc:'',
                 dropzoneOptions: {
                     url: 'http://127.0.0.1:8000/api/upload',
                     params: {
@@ -110,23 +136,26 @@
                 this.$refs.myVueDropzone.processQueue();
             },
             previewFile(file_path){
-                console.log('path:' + file_path);
+                $('#previewImg').modal('show');
+                this.imgSrc = '/storage/'+file_path;
             },
-            download(){
+            download(file){
                 axios({
                     url: '/api/download/'+ this.$route.params.id,
                     method: 'GET',
                     responseType: 'blob',
                 })
                 .then((res) => {
-                    let blob = new Blob([res.data], { type: res.headers['content-type'] });
-                    let link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download =blob.type.slice(blob.type.lastIndexOf('i'));
-                    link.click()
+                    var blob = new Blob([res.data], {type: "octet/stream"}),
+                        url = window.URL.createObjectURL(blob),
+                        a = document.createElement("a");
+                    a.href = url;
+                    a.download = file.file_name;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
                 })
                 .catch(err => console.log(err))
-            }
+            },
         },
         
     }

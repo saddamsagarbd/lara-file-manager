@@ -51,7 +51,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <a href="#" class="d-block">{{ Auth::user()->name }}</a>
         </div>
       </div>
-
       <!-- Sidebar Menu -->
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -63,6 +62,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <p>Dashboard</p>
                 </router-link>
             </li>
+            @if(Auth::user()->user_role == 1)
             <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <i class="nav-icon fas fa-cogs"></i>
@@ -86,18 +86,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </li>
                 </ul>
             </li>
+            @endif
             <li class="nav-item">
                 <router-link to="/file-manager" class="nav-link">
                     <i class="nav-icon fas fa-folder"></i>
                     <p>File Manager</p>
                 </router-link>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <router-link to="/file-upload" class="nav-link">
                     <i class="nav-icon fas fa-folder"></i>
                     <p>File Upload</p>
                 </router-link>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('logout') }}"
                     onclick="event.preventDefault();

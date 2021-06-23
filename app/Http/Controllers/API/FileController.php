@@ -30,20 +30,36 @@ class FileController extends Controller
      */
     public function store(Request $request)
     {
+        $getFilesettings = FileManage::where('user_id', NULL)->get();
+        $allowFormat = explode(',', $getFilesettings[0]["allowFormat"]);
+
+        $fileUpload = false;
+
         if(count($request->file('file')) > 0){
             $directoryDtl = Directory::findOrFail($request["directory_id"]);
             if(isset($directoryDtl["directory_name"])){
                 foreach($request->file('file') as $key => $file){
-                    $path = $file->store($directoryDtl["directory_name"]);           
-                    if($path){
-                        File::create([
-                            'file_name' => $file->getClientOriginalName(),
-                            'file_path' => $path,
-                            'folder_id' => $directoryDtl["id"],
-                        ]);
+                    if(in_array($file->extension(), $allowFormat)){
+                        $fileUpload = true;
+                        $path = $file->store($directoryDtl["directory_name"]);           
+                        if($path){
+                            File::create([
+                                'file_name' => $file->getClientOriginalName(),
+                                'file_path' => $path,
+                                'folder_id' => $directoryDtl["id"],
+                            ]);
+                        }
+                    }else{
+                        $fileUpload = false;
                     }
                 }
-                return ['status'=>"success", 'msg' => "File successfully uploaded"];
+
+                if($fileUpload == true){
+                    return ['status'=>"success", 'msg' => "File successfully uploaded"];
+                }else{
+                    return ['status'=>"error", 'msg' => "File format is not allow to upload."];
+                }
+                
             }else{
                 return ['status'=>"error", 'msg' => "File not upload"];
             }
@@ -107,12 +123,27 @@ class FileController extends Controller
             'allowFormat' => 'required|max:191',
             'maxFileSize' => 'required',
         ]);
-        FileManage::create([
-            'allowFormat' => $request['allowFormat'],
-            'maxFileSize' => $request['maxFileSize'],
-            // 'user_id' => $request['user_id'],
-        ]);
-        return ['status'=>"success", 'msg' => "File settings created"];
 
+        $getFilesettings = FileManage::where('user_id', NULL)->get();
+        if(!is_null($getFilesettings)){
+            FileManage::where('user_id', NULL)
+                    ->update([
+                        'allowFormat' => $request['allowFormat'],
+                        'maxFileSize' => $request['maxFileSize'],
+                    ]);
+            return ['status'=> 'success', 'message' => "File settings updated."];
+        }else{
+            FileManage::create([
+                'allowFormat' => $request['allowFormat'],
+                'maxFileSize' => $request['maxFileSize'],
+            ]);
+            return ['status'=>'success', 'message' => "File settings created"];
+        }
+
+    }
+
+    public function getFileSettings()
+    {
+        return FileManage::where('user_id', NULL)->get();
     }
 }

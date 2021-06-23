@@ -27,6 +27,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     Route::get('folder/{id}/files', [FileController::class, 'index']);
     Route::get('download/{file_id}', [FileController::class, 'downloadFile']);
     Route::post('fileSettings', [FileController::class, 'fileSettings']);
+    Route::get('fileSettings', [FileController::class, 'getFileSettings']);
 
 
 

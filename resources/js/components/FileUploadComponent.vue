@@ -98,6 +98,8 @@
                     maxFiles: 3,
                     uploadMultiple: true,
                     autoProcessQueue: false,
+                    addRemoveLinks: true,
+                    removeFile:true,
                     dictDefaultMessage: "<i class='fas fa-cloud-upload-alt'></i>UPLOAD FILES"
                 }
             }
@@ -106,10 +108,8 @@
             vueDropzone: vue2Dropzone
         },
         created: function(){
-            // let id = this.$route.params.id;
             this.loadFiles();
             Fire.$on("afterUploadSuccess", () => this.loadFiles());
-            // Fire.$on("AfterFileDelete", ()=> this.loadFiles());
             
         },
         methods:{

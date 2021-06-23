@@ -2068,12 +2068,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  mounted: function mounted() {// this.loadFileSettings();
-    // Fire.$on("AfterCreate", () => this.loadFileSettings());
-  },
   data: function data() {
     return {
-      settings: {},
+      // settings: {},
       btnText: "Create",
       form: new Form({
         allowFormat: '',
@@ -2082,9 +2079,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       })
     };
   },
+  mounted: function mounted() {
+    var _this = this;
+
+    console.log('mounted');
+    this.loadFileSettings();
+    Fire.$on("AfterCreate", function () {
+      return _this.loadFileSettings();
+    });
+  },
   methods: {
+    loadFileSettings: function loadFileSettings() {
+      var _this2 = this;
+
+      axios.get('/api/fileSettings').then(function (_ref) {
+        var data = _ref.data;
+        return _this2.form.fill(data[0]);
+      });
+    },
     fileSettings: function fileSettings() {
-      var _this = this;
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var response;
@@ -2092,20 +2106,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _this.$Progress.start();
+                _this3.$Progress.start();
 
                 _context.next = 3;
-                return _this.form.post('/api/fileSettings').then(function () {
+                return _this3.form.post('/api/fileSettings').then(function (data) {
+                  console.log('test:' + data);
                   Fire.$emit("AfterCreate");
                   Toast.fire({
                     icon: 'success',
-                    title: 'File settings created'
+                    title: 'File settings updated'
                   });
-                  _this.btnText = "Update";
+                  _this3.btnText = "Update";
 
-                  _this.$Progress.finish();
+                  _this3.$Progress.finish();
                 })["catch"](function () {
-                  _this.$Progress.fail();
+                  _this3.$Progress.fail();
                 });
 
               case 3:
@@ -2215,11 +2230,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       directories: {},
+      editmode: false,
       form: new Form({
+        id: '',
         directory_name: ''
       })
     };
@@ -2234,6 +2252,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     Fire.$on("AfterDelete", function () {
       return _this.displayDirectories();
     });
+    Fire.$on("AfterUpdate", function () {
+      return _this.displayDirectories();
+    });
   },
   methods: {
     createDirectoryModal: function createDirectoryModal() {
@@ -2241,20 +2262,39 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       $('#createDirectory').modal('show');
     },
     renameDirectory: function renameDirectory(directory) {
+      this.editmode = true;
       this.form.reset();
       $('#createDirectory').modal('show');
       this.form.fill(directory);
     },
-    displayDirectories: function displayDirectories() {
+    updateDirectory: function updateDirectory() {
       var _this2 = this;
+
+      this.$Progress.start();
+      this.form.put('/api/directories/' + this.form.id).then(function () {
+        Fire.$emit("AfterUpdate");
+        Toast.fire({
+          icon: 'success',
+          title: 'Directory successfully renamed'
+        });
+
+        _this2.hideModal();
+
+        _this2.$Progress.finish();
+      })["catch"](function () {
+        _this2.$Progress.fail();
+      });
+    },
+    displayDirectories: function displayDirectories() {
+      var _this3 = this;
 
       axios.get('/api/directories').then(function (_ref) {
         var data = _ref.data;
-        return _this2.directories = data;
+        return _this3.directories = data;
       });
     },
     createDirectory: function createDirectory() {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var response;
@@ -2262,21 +2302,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _this3.$Progress.start();
+                _this4.$Progress.start();
 
                 _context.next = 3;
-                return _this3.form.post('/api/directories').then(function () {
+                return _this4.form.post('/api/directories').then(function () {
                   Fire.$emit("AfterCreate");
                   Toast.fire({
                     icon: 'success',
                     title: 'Directory successfully created'
                   });
 
-                  _this3.hideModal();
+                  _this4.hideModal();
 
-                  _this3.$Progress.finish();
+                  _this4.$Progress.finish();
                 })["catch"](function () {
-                  _this3.$Progress.fail();
+                  _this4.$Progress.fail();
                 });
 
               case 3:
@@ -2291,7 +2331,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     deleteDirectory: function deleteDirectory(id) {
-      var _this4 = this;
+      var _this5 = this;
 
       Swal.fire({
         title: 'Are you sure?',
@@ -2303,10 +2343,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.isConfirmed) {
-          _this4.$Progress.start(); // send the request to server
+          _this5.$Progress.start(); // send the request to server
 
 
-          _this4.form["delete"]('api/directories/' + id).then(function (_ref2) {
+          _this5.form["delete"]('api/directories/' + id).then(function (_ref2) {
             var data = _ref2.data;
             Fire.$emit("AfterDelete");
             Toast.fire({
@@ -2314,9 +2354,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               title: data.message
             });
 
-            _this4.$Progress.finish();
+            _this5.$Progress.finish();
           })["catch"](function () {
-            _this4.$Progress.fail();
+            _this5.$Progress.fail();
           });
         }
       });
@@ -2451,6 +2491,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         maxFiles: 3,
         uploadMultiple: true,
         autoProcessQueue: false,
+        addRemoveLinks: true,
+        removeFile: true,
         dictDefaultMessage: "<i class='fas fa-cloud-upload-alt'></i>UPLOAD FILES"
       }
     };
@@ -2461,11 +2503,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   created: function created() {
     var _this = this;
 
-    // let id = this.$route.params.id;
     this.loadFiles();
     Fire.$on("afterUploadSuccess", function () {
       return _this.loadFiles();
-    }); // Fire.$on("AfterFileDelete", ()=> this.loadFiles());
+    });
   },
   methods: {
     loadFiles: function loadFiles() {
@@ -43480,7 +43521,7 @@ var render = function() {
                 on: {
                   submit: function($event) {
                     $event.preventDefault()
-                    return _vm.createDirectory.apply(null, arguments)
+                    _vm.editmode ? _vm.updateDirectory() : _vm.createDirectory()
                   },
                   keydown: function($event) {
                     return _vm.form.onKeydown($event)
@@ -43547,10 +43588,35 @@ var render = function() {
                     _c(
                       "button",
                       {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: !_vm.editmode,
+                            expression: "!editmode"
+                          }
+                        ],
                         staticClass: "btn btn-primary",
                         attrs: { type: "submit", disabled: _vm.form.busy }
                       },
                       [_vm._v("Create")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        directives: [
+                          {
+                            name: "show",
+                            rawName: "v-show",
+                            value: _vm.editmode,
+                            expression: "editmode"
+                          }
+                        ],
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "submit", disabled: _vm.form.busy }
+                      },
+                      [_vm._v("Update")]
                     )
                   ])
                 ])

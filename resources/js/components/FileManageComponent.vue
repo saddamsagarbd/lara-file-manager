@@ -53,12 +53,8 @@
 
 <script>
     export default {
-        mounted() {
-            // this.loadFileSettings();
-            // Fire.$on("AfterCreate", () => this.loadFileSettings());
-        },
         data: () => ({
-            settings: {},
+            // settings: {},
             btnText:"Create",
             form: new Form({
                 allowFormat: '',
@@ -66,15 +62,24 @@
                 // user_id: '',
             })
         }),
+        mounted() {
+            console.log('mounted');
+            this.loadFileSettings();
+            Fire.$on("AfterCreate", () => this.loadFileSettings());
+        },
         methods:{
+            loadFileSettings(){
+                axios.get('/api/fileSettings').then(({ data }) => (this.form.fill(data[0])));
+            },
             async fileSettings () {
                 this.$Progress.start()
                 const response = await this.form.post('/api/fileSettings')
-                .then(() => {
+                .then((data) => {                    
+                    console.log('test:' + data);
                     Fire.$emit("AfterCreate");
                     Toast.fire({
                         icon: 'success',
-                        title: 'File settings created'
+                        title: 'File settings updated'
                     })
                     this.btnText = "Update";
                     this.$Progress.finish()

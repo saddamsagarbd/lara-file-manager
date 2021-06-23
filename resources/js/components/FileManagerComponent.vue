@@ -47,7 +47,7 @@
         <!-- Modal -->
         <div class="modal fade bd-example-modal-lg" id="createDirectory" tabindex="-1" role="dialog" aria-labelledby="createDirectoryTitle" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
-                <form @submit.prevent="createDirectory" @keydown="form.onKeydown($event)">
+                <form @submit.prevent="editmode?updateDirectory():createDirectory()" @keydown="form.onKeydown($event)">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="createDirectoryTitle">Create Directory</h5>
@@ -61,7 +61,8 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                            <button type="submit" :disabled="form.busy" class="btn btn-primary">Create</button>
+                            <button v-show="!editmode" type="submit" :disabled="form.busy" class="btn btn-primary">Create</button>
+                            <button v-show="editmode" type="submit" :disabled="form.busy" class="btn btn-primary">Update</button>
                         </div>
                     </div>
                 </form>
@@ -74,7 +75,9 @@
     export default {
         data: () => ({
             directories: {},
+            editmode: false,
             form: new Form({
+                id: '',
                 directory_name: '',
             })
         }),
@@ -82,6 +85,7 @@
             this.displayDirectories();
             Fire.$on("AfterCreate", () => this.displayDirectories());
             Fire.$on("AfterDelete", ()=> this.displayDirectories());
+            Fire.$on("AfterUpdate", ()=> this.displayDirectories());
         },
         methods: {
             createDirectoryModal(){
@@ -89,9 +93,26 @@
                 $('#createDirectory').modal('show');
             },
             renameDirectory(directory){
+                this.editmode = true;
                 this.form.reset();
                 $('#createDirectory').modal('show');
                 this.form.fill(directory);
+            },
+            updateDirectory(){
+                this.$Progress.start()
+                this.form.put('/api/directories/'+this.form.id)
+                .then(() => {
+                    Fire.$emit("AfterUpdate");
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Directory successfully renamed'
+                    })
+                    this.hideModal();
+                    this.$Progress.finish()
+                }).catch(()=>{
+                    this.$Progress.fail()
+                })
+
             },
             displayDirectories(){
                 axios.get('/api/directories').then(({ data }) => (this.directories = data));

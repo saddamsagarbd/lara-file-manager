@@ -56,7 +56,13 @@ class DirectoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $directory = Directory::findOrFail($id);
+        $this->validate($request, [
+            'directory_name' => 'required|min:3|max:191',
+        ]);
+        $directory->update($request->all());
+        
+        return ['message' => 'rename directory'];
     }
 
     /**

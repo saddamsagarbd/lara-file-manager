@@ -22,7 +22,7 @@
                 <button
                     type="button"
                     class="btn btn-success"
-                    style="float: right;"
+                    style="float: right; margin-top: 10px"
                     @click="uploadFiles"
                 >
                   Upload Files
@@ -36,14 +36,9 @@
                     <div class="col-lg-4" v-for="file in files" :key="file.id">
                         <div class="card">
                             <div class="card-body">
-                                <!-- <img :src="getFile()" alt="{{ file.file_name }}" class="img-thumbnail" /> -->
+                                <img :src="'/storage/'+file.file_path" alt="" class="img-thumbnail" style="width: 100px; height: 100px" />
                                 <h5 class="card-title" style="overflow:hidden;">{{ file.file_name }}</h5>
-
-                                <p class="card-text">
-                                File size:#
-                                </p>
-
-                                <a href="#" class="card-link">Preview</a>
+                                <a href="#" class="card-link" @click="previewFile(file.file_path)">Preview</a>
                                 <a href="#" class="card-link" @click="download">Download</a>
                             </div>
                         </div>
@@ -84,11 +79,12 @@
         components:{
             vueDropzone: vue2Dropzone
         },
-        created:function(){
-            let id = this.$route.params.id;
+        created: function(){
+            // let id = this.$route.params.id;
             this.loadFiles();
             Fire.$on("afterUploadSuccess", () => this.loadFiles());
             // Fire.$on("AfterFileDelete", ()=> this.loadFiles());
+            
         },
         methods:{
             loadFiles(){
@@ -113,6 +109,9 @@
             uploadFiles: async function () {
                 this.$refs.myVueDropzone.processQueue();
             },
+            previewFile(file_path){
+                console.log('path:' + file_path);
+            },
             download(){
                 axios({
                     url: '/api/download/'+ this.$route.params.id,
@@ -120,12 +119,6 @@
                     responseType: 'blob',
                 })
                 .then((res) => {
-                    // var fileURL = window.URL.createObjectURL(new Blob([res.data]));
-                    // var fileLink = document.createElement('a');
-                    // fileLink.href = fileURL;
-                    // fileLink.setAttribute('download', 'file.jpeg');                    
-                    // document.body.appendChild(fileLink);
-                    // fileLink.click();
                     let blob = new Blob([res.data], { type: res.headers['content-type'] });
                     let link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
